@@ -1,0 +1,1 @@
+export const VISTA_MILISTA_GRID = 'VISTA_MILISTA_GRID'
