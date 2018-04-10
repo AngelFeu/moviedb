@@ -1,16 +1,14 @@
 import React from 'react'
-import { Route } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import GridItem from './GridItem'
 import ListItem from './ListItem'
-import Detalle from './Detalle'
 
 const ItemsSection = ({ Items, Vista, Tipo, Agregar, Quitar, Visto }) => { // Agregar, Quitar, Visto
     const buildAgregar = (Item) => {
       if (!Agregar) {
         return false
       }
-      return () => Agregar(Item.id, Tipo === 'peliculas' ? Item.title : Item.name, Tipo === 'peliculas' ? Item.release_date : Item.first_air_date, Item.overview, Item.backdrop_path, false)
+      return () => Agregar(Item.id, Tipo === 'movie' ? Item.title : Item.name, Tipo === 'movie' ? Item.release_date : Item.first_air_date, Item.overview, Item.backdrop_path, false)
     }
     const buildQuitar = (Item) => {
       if (!Quitar) {
@@ -34,26 +32,24 @@ const ItemsSection = ({ Items, Vista, Tipo, Agregar, Quitar, Visto }) => { // Ag
                     ? <GridItem
                         key={item.id}
                         Id={item.id}
-                        Type={ Tipo === 'peliculas' ? 'movie' : 'tv' }
-                        Name={ Tipo === 'peliculas' ? item.title : item.name }
-                        Date={ Tipo === 'peliculas' ? item.release_date : item.first_air_date }
+                        Type={ Tipo === 'milista' ? item.tipo : Tipo }
+                        Name={ Tipo === 'movie' ? item.title : item.name }
+                        Date={ Tipo === 'movie' ? item.release_date : item.first_air_date }
                         Img={item.backdrop_path}
                       />
                     : <ListItem
                         key={item.id}
                         Id={item.id}
-                        Type={ Tipo === 'peliculas' ? 'movie' : 'tv' }
-                        Name={ Tipo === 'peliculas' ? item.title : item.name }
+                        Type={ Tipo }
+                        Name={ Tipo === 'movie' ? item.title : item.name }
                         Overview={item.overview}
                         Img={item.backdrop_path}
-                      //  click={() => Agregar(item.id, Tipo === 'peliculas' ? item.title : item.name, Tipo === 'peliculas' ? item.release_date : item.first_air_date, item.overview, item.backdrop_path, false)}
                         Agregar={buildAgregar(item)}
                         Quitar={buildQuitar(item)}
                         Visto={buildVisto(item)}
                       />
             )}
           </div>
-          <Route path={`/detalle/:tipo/:id/:name`} component={Detalle} />
         </div>
       </section>
     );
@@ -68,7 +64,7 @@ ItemsSection.propTypes = {
   //   )
   // ).isRequired,
   Vista : PropTypes.oneOf(['grid', 'list']),
-  Tipo : PropTypes.oneOf(['peliculas', 'series', 'milista']),
+  Tipo : PropTypes.oneOf(['movie', 'tv', 'milista']),
 }
 
 ItemsSection.defaultProps = {

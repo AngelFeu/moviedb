@@ -2,8 +2,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Select = ({ id, Items, OptionDefault, alCambiar }) => (
-  <select name={id} id={id} onChange={(event) => alCambiar(event)} className="form-control">
+const Select = ({ id, Items, selected, OptionDefault, alCambiar }) => (
+  <select name={id} id={id} value={selected} onChange={(event) => alCambiar(event)} className="form-control">
     {OptionDefault ? <option value="">{OptionDefault}</option> : ''}
     {Items ? Items.map(function(Item,index) {
                 return <option value={Item.id} key={index}>{Item.name}</option>
@@ -11,7 +11,7 @@ const Select = ({ id, Items, OptionDefault, alCambiar }) => (
       : null
     }
   </select>
-);
+)
 
 // Button.propTypes = {
 //   title : PropTypes.string.isRequired,

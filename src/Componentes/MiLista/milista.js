@@ -8,44 +8,44 @@ import {
   VISTA_MILISTA_GRID
 } from '../../constants/action-types'
 
-const Series = ({ dispatch, milista, isMiListaFetching, isMiListaFetched, errorMiLista, vistaMiLista, GridActivoMiLista, ListActivoMiLista }) => {
+const vistaGrid = () => ({
+  type: VISTA_MILISTA_GRID
+})
 
-  const vistaGrid = () => {
-    dispatch({
-      type: VISTA_MILISTA_GRID
-    })
+const vistaList = () => ({
+  type: 'VISTA_MILISTA_LIST'
+})
+
+const fetchMiLista = milista => ({
+  type: 'FETCH_MILISTA_SUCCESS',
+  milista
+})
+
+const Quitar = ( id ) => {
+  const milista = JSON.parse(window.localStorage.getItem('milista'))
+
+  const item = milista.find((item) => item.id === id)
+  if (item) {
+    const quitar = milista.indexOf(item)
+    milista.splice(quitar, 1)
+    window.localStorage.setItem('milista', JSON.stringify(milista))
   }
 
-  const vistaList = () => {
-    dispatch({
-      type: 'VISTA_MILISTA_LIST'
-    })
-  }
+  return fetchMiLista(milista)
+}
 
-  const Quitar = ( id ) => {
-    const milista = JSON.parse(window.localStorage.getItem('milista'))
-
-    const item = milista.find((item) => item.id === id)
-    if (item) {
-      const quitar = milista.indexOf(item)
-      milista.splice(quitar, 1)
-      window.localStorage.setItem('milista', JSON.stringify(milista))
+const Visto = ( id ) => {
+  const milista = JSON.parse(window.localStorage.getItem('milista'))
+  const nuevaLista = milista.map(item => {
+    if (item.id === id) {
+      item.visto = true
     }
-  }
+    return item
+  })
+  window.localStorage.setItem('milista', JSON.stringify(nuevaLista))
+}
 
-  const Visto = ( id ) => {
-    const milista = JSON.parse(window.localStorage.getItem('milista'))
-console.log(milista)
-    const nuevaLista = milista.map(item => {
-      if (item.id === id) {
-        item.visto = true
-      }
-      return item
-    })
-    window.localStorage.setItem('milista', JSON.stringify(nuevaLista))
-console.log(nuevaLista)
-  }
-
+const Series = ({ vistaGrid, vistaList, Quitar, Visto, milista, isMiListaFetching, isMiListaFetched, errorMiLista, vistaMiLista, GridActivoMiLista, ListActivoMiLista }) => {
   return (
     <div>
       <main role="main">
@@ -63,10 +63,10 @@ console.log(nuevaLista)
                 </div>
               </div>
             </div>
-            {isMiListaFetching ? <Loading Title="" Texto="" Mostrar="2" /> : ''}
-            {milista === '' ? <Loading Title="" Texto="No hay elementos agregados a la lista" Mostrar="1" /> : ''}
+            {isMiListaFetching && milista.length === 0 ? <Loading Title="" Texto="" Mostrar="2" /> : ''}
+            {isMiListaFetched && milista.length === 0 ? <Loading Title="" Texto="No hay elementos agregados a la lista" Mostrar="1" /> : ''}
             {errorMiLista ? <Loading Title="" Texto="Error al obtener los elementos de la lista" Mostrar="1" /> : ''}
-            {isMiListaFetched && milista !== '' ? <ItemsSection Items={milista} Vista={vistaMiLista} Tipo='milista' Quitar={Quitar} Visto={Visto} /> : ''}
+            {isMiListaFetched && milista.length > 0 ? <ItemsSection Items={milista} Vista={vistaMiLista} Tipo='milista' Quitar={Quitar} Visto={Visto} /> : ''}
           </div>
         </div>
       </main>
@@ -74,4 +74,4 @@ console.log(nuevaLista)
   )
 }
 
-export default connect()(Series)
+export default connect(null, { vistaGrid, vistaList, Quitar, Visto })(Series)

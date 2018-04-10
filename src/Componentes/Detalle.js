@@ -1,24 +1,30 @@
 import React, {Component} from 'react'
+import Loading from './Loading'
 import Axios from 'axios'
 
 class Detalle extends Component {
-
-  state = {
-    datos: [],
-    isFetching: false
+  constructor({ match }) {
+    super({ match })
+    this.state = {
+      tipo: match.params.tipo,
+      id: match.params.id,
+      datos: [],
+      isFetching: false
+    }
   }
 
   componentDidMount () {
-    this.fetchCategory(this.props.match.params.tipo, this.props.match.params.id)
+    const { tipo, id } = this.state
+    this.fetch(tipo, id)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.match.params.id !== nextProps.match.params.id) {
-      this.fetchCategory(nextProps.match.params.tipo, nextProps.match.params.id)
+      this.fetch(nextProps.match.params.tipo, nextProps.match.params.id)
     }
   }
 
-  fetchCategory (tipo, id) {
+  fetch (tipo, id) {
     this.setState({ isFetching: true })
     Axios.get(`/${tipo}/${id}`, { params: {
           api_key: '8bd42374a45989a00cd13bc15ad622dd',
@@ -36,7 +42,7 @@ class Detalle extends Component {
     const { isFetching, datos } = this.state
     return (
       isFetching
-      ? 'cargando...'
+      ? <Loading Title="" Texto="" Mostrar="2" />
       : <main role="main">
           <div className="py-5 bg-light">
               <div className="container">

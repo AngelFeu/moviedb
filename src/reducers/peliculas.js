@@ -1,6 +1,6 @@
 const initialState = {
   generosPeliculas: [],
-  generoPeliculaID: '',
+  generoPeliculaID: null,
   vistaPeliculas: 'grid',
   GridActivoPeliculas: true,
   ListActivoPeliculas: false,

@@ -13,9 +13,6 @@ const initialState = {
   cantidadMiLista: 0
 }
 
-// const GridActivoMiLista = state => state.vistaMiLista === 'grid'
-
-
 export default (state = initialState, { type, ...payload }) => {
   switch (type) {
     case VISTA_MILISTA_GRID:

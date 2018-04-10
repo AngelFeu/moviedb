@@ -38,9 +38,9 @@ const seriesFailed = error => ({
   error
 })
 
-const fetchSeries = () => dispatch => {
+const fetchSeries = (generoSerieID) => dispatch => {
   dispatch(seriesFetched())
-  Axios.get('/tv/popular', { params: {
+  Axios.get('/genre/${generoSerieID}/tv', { params: {
       api_key: '8bd42374a45989a00cd13bc15ad622dd',
       language: 'es-AR',
       page: 1
@@ -55,8 +55,8 @@ const fetchSeries = () => dispatch => {
 export default compose(
   connect(mapStateToProps, { fetchSeries, fetchGenerosSeries }),
   lifecycle({
-    componentDidMount () {
-      this.props.fetchSeries()
+    componentDidMount(){
+      this.props.fetchSeries(this.props.generoSerieID)
       this.props.fetchGenerosSeries()
     }
   })

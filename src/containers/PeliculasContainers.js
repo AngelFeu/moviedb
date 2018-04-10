@@ -38,13 +38,25 @@ const peliculasFailed = error => ({
   error
 })
 
+const fetchPeliculasWhitGenRe = (generoPeliculaID) => dispatch => {
+  dispatch(peliculasFetched())
+  Axios.get(`/genre/${generoPeliculaID}/movies`, { params: {
+      api_key: '8bd42374a45989a00cd13bc15ad622dd',
+      language: 'es-AR',
+      page: 1
+    }
+  }).then(response =>
+    dispatch(peliculasSuccess(response.data.results))
+  , err =>
+    dispatch(peliculasFailed(err.message))
+  )
+}
+
 const fetchPeliculas = () => dispatch => {
-//  console.log(generoPeliculaID)
   dispatch(peliculasFetched())
   Axios.get('/movie/popular', { params: {
       api_key: '8bd42374a45989a00cd13bc15ad622dd',
       language: 'es-AR',
-  //    genres: generoPeliculaID,
       page: 1
     }
   }).then(response =>
@@ -55,10 +67,10 @@ const fetchPeliculas = () => dispatch => {
 }
 
 export default compose(
-  connect(mapStateToProps, { fetchPeliculas, fetchGenerosPeliculas }),
+  connect(mapStateToProps, { fetchPeliculas, fetchPeliculasWhitGenRe, fetchGenerosPeliculas }),
   lifecycle({
     componentDidMount () {
-      this.props.fetchPeliculas()
+      !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe() : this.props.fetchPeliculas(this.props.generoPeliculaID)
       this.props.fetchGenerosPeliculas()
     }
   })

@@ -5,36 +5,36 @@ import Select from '../Select'
 import Button from '../Button'
 import Loading from '../Loading'
 
-const Peliculas = ({ dispatch, movies, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
+const ajustarCantidad = (cantidadItems) => ({
+  type: 'FETCH_MILISTA_CANTIDAD',
+  cantidadItems
+})
 
-  const dispacharGenero = (event) => {
-    dispatch({
-      type: 'GENERO_PELICULA_ID',
-      generoPeliculaID: event.target.value
-    })
+const agregarMiLista = (id, name, first_air_date, overview, backdrop_path, visto) => {
+  const ver = JSON.parse(window.localStorage.getItem('milista'))
+
+  if (!ver.find((veo) => veo.id === id)) {
+    ver.push({ tipo: 'movie', id, name, first_air_date, overview, backdrop_path, visto })
+    window.localStorage.setItem('milista', JSON.stringify(ver))
   }
 
-  const vistaGrid = () => {
-    dispatch({
-      type: 'VISTA_PELICULA_GRID'
-    })
-  }
+  return ajustarCantidad(ver.length)
+}
 
-  const vistaList = () => {
-    dispatch({
-      type: 'VISTA_PELICULA_LIST'
-    })
-  }
+const dispacharGenero = (event) => ({
+  type: 'GENERO_PELICULA_ID',
+  generoPeliculaID: event.target.value
+})
 
-  const Agregar = ( id, name, first_air_date, overview, backdrop_path, visto ) => {
-    const ver = JSON.parse(window.localStorage.getItem('milista'))
+const vistaGrid = () => ({
+  type: 'VISTA_PELICULA_GRID'
+})
 
-    if (!ver.find((veo) => veo.id === id)) {
-      ver.push({ id, name, first_air_date, overview, backdrop_path, visto })
-      window.localStorage.setItem('milista', JSON.stringify(ver))
-    }
-  }
+const vistaList = () => ({
+  type: 'VISTA_PELICULA_LIST'
+})
 
+const Peliculas = ({ dispacharGenero, vistaGrid, vistaList, agregarMiLista, movies, generoPeliculaID, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
   return (
     <div>
       <main role="main">
@@ -45,7 +45,7 @@ const Peliculas = ({ dispatch, movies, isFetching, isFetched, error, generosPeli
               <div className="filters-bar-left">
                 <Select id="filter-year" Items='' OptionDefault="Año" />
                 <Select id="filter-sort" Items='' OptionDefault="Ordenar por" />
-                <Select id="filter-genre" Items={generosPeliculas} OptionDefault="Géneros" alCambiar={dispacharGenero}/>
+                <Select id="filter-genre" Items={generosPeliculas} selected={generoPeliculaID} OptionDefault="Géneros" alCambiar={dispacharGenero}/>
               </div>
               <div className="filters-bar-right">
                 <Button iCLass="mdi-view-grid" type="light" click={vistaGrid} active={GridActivoPeliculas} />
@@ -55,7 +55,7 @@ const Peliculas = ({ dispatch, movies, isFetching, isFetched, error, generosPeli
             {isFetching && movies.length === 0 ? <Loading Title="" Texto="" Mostrar="2" /> : ''}
             {isFetched && movies.length === 0 ? <Loading Title="" Texto="No hay peliculas para mostrar" Mostrar="1" /> : ''}
             {error ? <Loading Title="" Texto="Error al obtener las peliculas" Mostrar="1" /> : ''}
-            {isFetched && movies.length > 0 ? <ItemsSection Items={movies} Vista={vistaPeliculas} Tipo='peliculas' Agregar={Agregar} /> : ''}
+            {isFetched && movies.length > 0 ? <ItemsSection Items={movies} Vista={vistaPeliculas} Tipo='movie' Agregar={agregarMiLista} /> : ''}
           </div>
         </div>
       </main>
@@ -63,4 +63,4 @@ const Peliculas = ({ dispatch, movies, isFetching, isFetched, error, generosPeli
   )
 }
 
-export default connect()(Peliculas)
+export default connect(null, { agregarMiLista, dispacharGenero, vistaGrid, vistaList })(Peliculas)

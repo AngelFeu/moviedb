@@ -11,6 +11,7 @@ const initialState = {
 }
 
 export default (state = initialState, { type, ...payloadSeries }) => {
+//  console.log(payloadSeries.generoSerieID)
   switch (type) {
     case 'FETCH_GENEROS_SERIES':
       return {
