@@ -40,9 +40,10 @@ const peliculasFailed = error => ({
 
 const fetchPeliculasWhitGenRe = (generoPeliculaID) => dispatch => {
   dispatch(peliculasFetched())
-  Axios.get(`/genre/${generoPeliculaID}/movies`, { params: {
+  Axios.get(`/movies/discover`, { params: {
       api_key: '8bd42374a45989a00cd13bc15ad622dd',
       language: 'es-AR',
+      whit_genre: generoPeliculaID,
       page: 1
     }
   }).then(response =>
@@ -70,7 +71,8 @@ export default compose(
   connect(mapStateToProps, { fetchPeliculas, fetchPeliculasWhitGenRe, fetchGenerosPeliculas }),
   lifecycle({
     componentDidMount () {
-      !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe() : this.props.fetchPeliculas(this.props.generoPeliculaID)
+      !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe(this.props.generoPeliculaID) : this.props.fetchPeliculas()
+    //  this.props.fetchPeliculas()
       this.props.fetchGenerosPeliculas()
     }
   })

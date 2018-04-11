@@ -1,15 +1,44 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import axios from 'axios'
+import Button from '../Button'
+import Loading from '../Loading'
+import ItemsSection from '../ItemsSection'
+
+const ajustarCantidad = (cantidadItems) => ({
+  type: 'FETCH_MILISTA_CANTIDAD',
+  cantidadItems
+})
+
+const agregarMiLista = (id, name, first_air_date, overview, backdrop_path, visto) => {
+  const ver = JSON.parse(window.localStorage.getItem('milista'))
+
+  if (!ver.find((veo) => veo.id === id)) {
+    ver.push({ tipo: 'movie', id, name, first_air_date, overview, backdrop_path, visto })
+    window.localStorage.setItem('milista', JSON.stringify(ver))
+  }
+
+  return ajustarCantidad(ver.length)
+}
 
 class Busqueda extends Component {
-  constructor({ match }) {
-    super({ match })
-
+  constructor({ match, agregarMiLista }) {
+    super({ match, agregarMiLista })
     this.state = {
       text: match.params.text,
       movies: [],
-      tvs: []
+      tvs: [],
+      cantidadMovies: 0,
+      cantidadTVs: 0,
+      botonMoviesActivo: true,
+      botonTVsActivo: false,
+      vistaGridActivo: true,
+      vistaListActivo: false,
+      isFetching: true,
+      isFetched: false
     }
+
+    this.agregarMiLista = agregarMiLista.bind(this)
 
     this.axios = axios.create({
       baseURL: 'https://api.themoviedb.org/3',
@@ -24,6 +53,21 @@ class Busqueda extends Component {
     const { text } = this.state
     this.getMovies(text)
     this.getTVs(text)
+    this.setState({
+      isFetching: false,
+      isFetched: true
+    })
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.match.params.text !== nextProps.match.params.text) {
+      this.setState({
+        text: nextProps.match.params.text
+      })
+
+      this.getMovies(nextProps.match.params.text)
+      this.getTVs(nextProps.match.params.text)
+    }
   }
 
   getMovies = (text) => {
@@ -34,7 +78,8 @@ class Busqueda extends Component {
       }
     }).then(res => {
       this.setState({
-        movies: res.data.results
+        movies: res.data.results,
+        cantidadMovies: res.data.total_results
       })
     })
   }
@@ -47,59 +92,62 @@ class Busqueda extends Component {
       }
     }).then(res => {
       this.setState({
-        tvs: res.data.results
+        tvs: res.data.results,
+        cantidadTVs: res.data.total_results
       })
     })
   }
 
   render(){
-    const { text } = this.state
+    const botonMoviesOnClick = (event) => (
+      this.setState({
+        botonMoviesActivo: true,
+        botonTVsActivo: false
+      })
+    )
+
+    const botonTVsOnClick = (event) => (
+      this.setState({
+        botonMoviesActivo: false,
+        botonTVsActivo: true
+      })
+    )
+
+    const botonGridOnClick = (event) => (
+      this.setState({
+        vistaGridActivo: true,
+        vistaListActivo: false
+      })
+    )
+
+    const botonListOnClick = (event) => (
+      this.setState({
+        vistaGridActivo: false,
+        vistaListActivo: true
+      })
+    )
+
+    const { agregarMiLista, text, isFetching, isFetched, movies, tvs, cantidadMovies, cantidadTVs, botonMoviesActivo, botonTVsActivo, vistaGridActivo, vistaListActivo } = this.state
     return(
       <div className="py-5 bg-light">
         <div className="container">
           <h1>Búsqueda > "{text}" en Series</h1>
           <div className="filters-bar">
             <div className="filters-bar-left">
-              <a href="busqueda-peliculas-grid.html" className="btn btn-outline-dark">Películas (2)</a>
-              <a href="busqueda-series-grid.html" className="btn btn-outline-dark active">Series (2)</a>
+              <Button title={`Películas (${cantidadMovies})`} type="outline-dark" active={botonMoviesActivo} click={botonMoviesOnClick} />
+              <Button title={`Series (${cantidadTVs})`} type="outline-dark" active={botonTVsActivo} click={botonTVsOnClick} />
             </div>
             <div className="filters-bar-right">
-              <a href="#" className="btn btn-light active" aria-label="Profile">
-                <i className="mdi mdi-view-grid" aria-hidden="true"></i>
-              </a>
-              <a href="#" className="btn btn-light" aria-label="Profile">
-                <i className="mdi mdi-view-list" aria-hidden="true"></i>
-              </a>
+              <Button iCLass="mdi-view-grid" type="light" click={botonGridOnClick} active={vistaGridActivo} />
+              <Button iCLass="mdi-view-list" type="light" click={botonListOnClick} active={vistaListActivo} />
             </div>
           </div>
-          <section className="items-section">
-            <div className="items-section-body">
-              <div className="row">
-                <article className="col-md-2">
-                  <a href="detalle.html" className="grid-item">
-                    <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie Image" className="img-fluid" />
-                    <span className="grid-item-body">
-                      <span className="grid-item-title">Thor: Ragnarok</span>
-                      <span className="grid-item-date">October 25, 2017</span>
-                    </span>
-                  </a>
-                </article>
-                <article className="col-md-2">
-                  <a href="detalle.html" className="grid-item">
-                    <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie Image" className="img-fluid" />
-                      <span className="grid-item-body">
-                        <span className="grid-item-title">Thor: Ragnarok</span>
-                        <span className="grid-item-date">October 25, 2017</span>
-                      </span>
-                    </a>
-                </article>
-              </div>
-            </div>
-          </section>
+          {isFetching ? <Loading Title="" Texto="" Mostrar="2" /> : ''}
+          {isFetched ? <ItemsSection Items={botonMoviesActivo ? movies : tvs} Vista={vistaGridActivo ? 'grid' : 'list'} Tipo={botonMoviesActivo ? 'movie' : 'tv'} Agregar={this.agregarMiLista} /> : ''}
         </div>
       </div>
     )
   }
 }
 
-export default Busqueda;
+export default connect(null, { agregarMiLista })(Busqueda);

@@ -43,7 +43,7 @@ class App extends Component {
           <Route path="/series" component={ Series } />
           <Route path="/milista" component={ MiLista } />
           <Route path={`/detalle/:tipo/:id/:name`} component={Detalle} />
-          <Route path="/busqueda/:text" component={ Busqueda } />
+          <Route path={`/busqueda/:text`} component={ Busqueda } />
           <Route component={ Home } />
         </Switch>
       </div>
