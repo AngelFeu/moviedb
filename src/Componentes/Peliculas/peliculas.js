@@ -59,8 +59,10 @@ const peliculasFailed = error => ({
   error
 })
 
-const fetchPeliculas = (generoPeliculaID) => {
+const fetchPeliculas = () => ( getState ) => {
   peliculasFetched()
+
+  const { generoPeliculaID, anioPelicula, ordenPelicula } = getState()
 
   let params = {
     api_key: '8bd42374a45989a00cd13bc15ad622dd',
@@ -68,8 +70,8 @@ const fetchPeliculas = (generoPeliculaID) => {
     page: 1
   }
   !!generoPeliculaID ? params.with_genres = generoPeliculaID : ''
-  // !!yearPelicula ? params.year = yearPelicula : ''
-  // !!sortbyPelicula ? params.sort_by = sortbyPelicula : ''
+  !!anioPelicula ? params.year = anioPelicula : ''
+  !!ordenPelicula ? params.sort_by = ordenPelicula : ''
 
   Axios.get('/discover/movie', { params: params
   }).then(response =>
@@ -81,13 +83,13 @@ const fetchPeliculas = (generoPeliculaID) => {
 
 const generoOnChange = (event) => {
   dispacharGenero(event)
-//  fetchPeliculas(event.target.value)
+  fetchPeliculas()
 }
 
 const anios = [{id: '2018', name: '2018'},{id: '2017', name: '2017'},{id: '2016', name: '2016'}]
 const orden = [{id: 'popularity.desc', name: 'Popularidad'},{id: 'release_date.desc', name: 'Fecha'},{id: 'original_title.asc', name: 'Titulo'}]
 
-const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, dispacharGenero, vistaGrid, vistaList, agregarMiLista, movies, generoPeliculaID, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
+const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, generoOnChange, vistaGrid, vistaList, agregarMiLista, movies, generoPeliculaID, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
   return (
     <div>
       <main role="main">
@@ -98,7 +100,7 @@ const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, dispach
               <div className="filters-bar-left">
                 <Select id="filter-year" Items={anios} selected={anioPelicula} OptionDefault="Año" alCambiar={comboAnio} />
                 <Select id="filter-sort" Items={orden} selected={ordenPelicula} OptionDefault="Ordenar por" alCambiar={comboOrden} />
-                <Select id="filter-genre" Items={generosPeliculas} selected={generoPeliculaID} OptionDefault="Géneros" alCambiar={dispacharGenero}/>
+                <Select id="filter-genre" Items={generosPeliculas} selected={generoPeliculaID} OptionDefault="Géneros" alCambiar={generoOnChange}/>
               </div>
               <div className="filters-bar-right">
                 <Button iCLass="mdi-view-grid" type="light" click={vistaGrid} active={GridActivoPeliculas} />
@@ -116,4 +118,4 @@ const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, dispach
   )
 }
 
-export default connect(null, { comboAnio, comboOrden, dispacharGenero, agregarMiLista, vistaGrid, vistaList })(Peliculas)
+export default connect(null, { comboAnio, comboOrden, generoOnChange, agregarMiLista, vistaGrid, vistaList })(Peliculas)

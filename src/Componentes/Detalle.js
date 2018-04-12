@@ -41,7 +41,9 @@ class Detalle extends Component {
   }
 
   render(){
-    const { isFetching, datos, tipo, homePeliculas, homeSeries } = this.state
+    const { isFetching, datos, tipo } = this.state
+    const { homePeliculas, homeSeries } = this.props
+
     return (
       isFetching
       ? <Loading Title="" Texto="" Mostrar="2" />
@@ -86,8 +88,8 @@ class Detalle extends Component {
                   </div>
                 </div>
               </section>
-              {/* {tipo === 'movie' && homePeliculas.length > 0 ? <ViewedItems Items={homePeliculas} Tipo='movie' /> : ''}
-              {tipo === 'tv' && homeSeries.length > 0 ? <ViewedItems Items={homeSeries} Tipo='tv' /> : ''} */}
+              {tipo === 'movie' && homePeliculas.length > 0 ? <ViewedItems Items={homePeliculas} Tipo='movie' title={true} /> : ''}
+              {tipo === 'tv' && homeSeries.length > 0 ? <ViewedItems Items={homeSeries} Tipo='tv' title={true} /> : ''}
             </div>
           </div>
         </main>
@@ -95,4 +97,9 @@ class Detalle extends Component {
   }
 }
 
-export default connect()(Detalle)
+export default connect(state => {
+  return {
+    homePeliculas: state.home.homePeliculas,
+    homeSeries: state.home.homeSeries
+  }
+})(Detalle)
