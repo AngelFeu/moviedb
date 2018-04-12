@@ -38,28 +38,19 @@ const peliculasFailed = error => ({
   error
 })
 
-const fetchPeliculasWhitGenRe = (generoPeliculaID) => dispatch => {
+const fetchPeliculas = (generoPeliculaID) => dispatch => {
   dispatch(peliculasFetched())
-  Axios.get(`/movies/discover`, { params: {
-      api_key: '8bd42374a45989a00cd13bc15ad622dd',
-      language: 'es-AR',
-      whit_genre: generoPeliculaID,
-      page: 1
-    }
-  }).then(response =>
-    dispatch(peliculasSuccess(response.data.results))
-  , err =>
-    dispatch(peliculasFailed(err.message))
-  )
-}
 
-const fetchPeliculas = () => dispatch => {
-  dispatch(peliculasFetched())
-  Axios.get('/movie/popular', { params: {
-      api_key: '8bd42374a45989a00cd13bc15ad622dd',
-      language: 'es-AR',
-      page: 1
-    }
+  let params = {
+    api_key: '8bd42374a45989a00cd13bc15ad622dd',
+    language: 'es-AR',
+    page: 1
+  }
+  !!generoPeliculaID ? params.with_genres = generoPeliculaID : ''
+  // !!yearPelicula ? params.year = yearPelicula : ''
+  // !!sortbyPelicula ? params.sort_by = sortbyPelicula : ''
+
+  Axios.get('/discover/movie', { params: params
   }).then(response =>
     dispatch(peliculasSuccess(response.data.results))
   , err =>
@@ -68,11 +59,11 @@ const fetchPeliculas = () => dispatch => {
 }
 
 export default compose(
-  connect(mapStateToProps, { fetchPeliculas, fetchPeliculasWhitGenRe, fetchGenerosPeliculas }),
+  connect(mapStateToProps, { fetchPeliculas, fetchGenerosPeliculas }),
   lifecycle({
     componentDidMount () {
-      !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe(this.props.generoPeliculaID) : this.props.fetchPeliculas()
-    //  this.props.fetchPeliculas()
+    //  !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe(this.props.generoPeliculaID) : this.props.fetchPeliculas()
+      this.props.fetchPeliculas(this.props.generoPeliculaID)
       this.props.fetchGenerosPeliculas()
     }
   })

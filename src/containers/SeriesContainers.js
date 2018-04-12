@@ -40,12 +40,17 @@ const seriesFailed = error => ({
 
 const fetchSeries = (generoSerieID) => dispatch => {
   dispatch(seriesFetched())
-//  Axios.get('/genre/${generoSerieID}/tv', { params: {
-  Axios.get('/tv/popular', { params: {
-      api_key: '8bd42374a45989a00cd13bc15ad622dd',
-      language: 'es-AR',
-      page: 1
-    }
+
+  let params = {
+    api_key: '8bd42374a45989a00cd13bc15ad622dd',
+    language: 'es-AR',
+    page: 1
+  }
+  !!generoSerieID ? params.with_genres = generoSerieID : ''
+  // !!yearPelicula ? params.year = yearPelicula : ''
+  // !!sortbyPelicula ? params.sort_by = sortbyPelicula : ''
+
+  Axios.get('/discover/tv', { params: params
   }).then(response => {
     dispatch(seriesSuccess(response.data.results))
   }, err =>
@@ -57,8 +62,8 @@ export default compose(
   connect(mapStateToProps, { fetchSeries, fetchGenerosSeries }),
   lifecycle({
     componentDidMount(){
-    //  this.props.fetchSeries(this.props.generoSerieID)
-      this.props.fetchSeries()
+    //  !!this.props.generoSerieID ? this.props.fetchSeriesWhitGenRe(this.props.generoSerieID) : this.props.fetchSeries()
+      this.props.fetchSeries(this.props.generoSerieID)
       this.props.fetchGenerosSeries()
     }
   })

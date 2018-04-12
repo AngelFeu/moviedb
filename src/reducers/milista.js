@@ -10,11 +10,17 @@ const initialState = {
   isMiListaFetching: false,
   isMiListaFetched: false,
   errorMiLista: null,
-  cantidadMiLista: 0
+  cantidadMiLista: 0,
+  filtroMiLista: null
 }
 
 export default (state = initialState, { type, ...payload }) => {
   switch (type) {
+    case 'FILTRO_MILISTA':
+      return {
+        ...state,
+        filtroMiLista: payload.filtroMiLista
+      }
     case VISTA_MILISTA_GRID:
       return {
         ...state,

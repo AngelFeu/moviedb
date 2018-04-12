@@ -1,6 +1,8 @@
 const initialState = {
   generosPeliculas: [],
   generoPeliculaID: null,
+  anioPelicula: null,
+  ordenoPelicula: null,
   vistaPeliculas: 'grid',
   GridActivoPeliculas: true,
   ListActivoPeliculas: false,
@@ -21,6 +23,16 @@ export default (state = initialState, { type, ...payload }) => {
       return {
         ...state,
         generoPeliculaID: payload.generoPeliculaID
+      }
+    case 'ANIO_PELICULA':
+      return {
+        ...state,
+        anioPelicula: payload.anioPelicula
+      }
+    case 'ORDEN_PELICULA':
+      return {
+        ...state,
+        ordenPelicula: payload.ordenPelicula
       }
     case 'VISTA_PELICULA_GRID':
       return {

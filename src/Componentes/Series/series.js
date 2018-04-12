@@ -5,6 +5,16 @@ import Select from '../Select'
 import Button from '../Button'
 import Loading from '../Loading'
 
+const comboAnio = event => ({
+  type: 'ANIO_SERIE',
+  anioSerie: event.target.value
+})
+
+const comboOrden = event => ({
+  type: 'ORDEN_SERIE',
+  ordenSerie: event.target.value
+})
+
 const ajustarCantidad = (cantidadItems) => ({
   type: 'FETCH_MILISTA_CANTIDAD',
   cantidadItems
@@ -49,7 +59,10 @@ const vistaList = () => ({
 //   )
 // }
 
-const Series = ({ dispacharGenero, vistaGrid, vistaList, agregarMiLista, tvs, generoSerieID, isSeriesFetching, isSeriesFetched, errorSeries, generosSeries, vistaSeries, GridActivoSeries, ListActivoSeries }) => {
+const anios = [{id: '2018', name: '2018'},{id: '2017', name: '2017'},{id: '2016', name: '2016'}]
+const orden = [{id: 'popularity.desc', name: 'Popularidad'},{id: 'release_date.desc', name: 'Fecha'},{id: 'original_title.asc', name: 'Titulo'}]
+
+const Series = ({ comboAnio, anioSerie, comboOrden, ordenSerie, dispacharGenero, vistaGrid, vistaList, agregarMiLista, tvs, generoSerieID, isSeriesFetching, isSeriesFetched, errorSeries, generosSeries, vistaSeries, GridActivoSeries, ListActivoSeries }) => {
   return (
     <div>
       <main role="main">
@@ -58,8 +71,8 @@ const Series = ({ dispacharGenero, vistaGrid, vistaList, agregarMiLista, tvs, ge
             <h1>Series</h1>
             <div className="filters-bar">
               <div className="filters-bar-left">
-                <Select id="filter-year" Items='' OptionDefault="Año" />
-                <Select id="filter-sort" Items='' OptionDefault="Ordenar por" />
+                <Select id="filter-year" Items={anios} selected={anioSerie} OptionDefault="Año" alCambiar={comboAnio} />
+                <Select id="filter-sort" Items={orden} selected={ordenSerie} OptionDefault="Ordenar por" alCambiar={comboOrden} />
                 <Select id="filter-genre" Items={generosSeries} selected={generoSerieID} OptionDefault="Géneros" alCambiar={dispacharGenero} />
               </div>
               <div className="filters-bar-right">
@@ -78,4 +91,4 @@ const Series = ({ dispacharGenero, vistaGrid, vistaList, agregarMiLista, tvs, ge
   )
 }
 
-export default connect(null, { agregarMiLista, dispacharGenero, vistaGrid, vistaList })(Series)
+export default connect(null, { comboAnio, comboOrden, agregarMiLista, dispacharGenero, vistaGrid, vistaList })(Series)

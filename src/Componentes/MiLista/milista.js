@@ -8,6 +8,11 @@ import {
   VISTA_MILISTA_GRID
 } from '../../constants/action-types'
 
+const comboMiLista = event => ({
+  type: 'FILTRO_MILISTA',
+  filtroMiLista: event.target.value
+})
+
 const vistaGrid = () => ({
   type: VISTA_MILISTA_GRID
 })
@@ -45,7 +50,9 @@ const Visto = ( id ) => {
   window.localStorage.setItem('milista', JSON.stringify(nuevaLista))
 }
 
-const Series = ({ vistaGrid, vistaList, Quitar, Visto, milista, isMiListaFetching, isMiListaFetched, errorMiLista, vistaMiLista, GridActivoMiLista, ListActivoMiLista }) => {
+const filtro = [{id: 'vistas', name: 'vistas'},{id: 'novistas', name: 'no vistas'}]
+
+const Series = ({ comboMiLista, filtroMiLista, vistaGrid, vistaList, Quitar, Visto, milista, isMiListaFetching, isMiListaFetched, errorMiLista, vistaMiLista, GridActivoMiLista, ListActivoMiLista }) => {
   return (
     <div>
       <main role="main">
@@ -54,7 +61,7 @@ const Series = ({ vistaGrid, vistaList, Quitar, Visto, milista, isMiListaFetchin
             <h1>Mi Lista</h1>
             <div className="filters-bar">
               <div className="filters-bar-left">
-                <Select id="filter-year" Items='' OptionDefault="Año" />
+                <Select id="filter-viewed" Items={filtro} selected={filtroMiLista} OptionDefault="todas" alCambiar={comboMiLista} />
               </div>
               <div className="filters-bar-right">
                 <div className="list-item-actions">
@@ -74,4 +81,4 @@ const Series = ({ vistaGrid, vistaList, Quitar, Visto, milista, isMiListaFetchin
   )
 }
 
-export default connect(null, { vistaGrid, vistaList, Quitar, Visto })(Series)
+export default connect(null, { comboMiLista, vistaGrid, vistaList, Quitar, Visto })(Series)

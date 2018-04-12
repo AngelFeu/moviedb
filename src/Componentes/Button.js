@@ -3,7 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Button = ({ title, iCLass, type, active, click }) => (
-
     <a className={`btn btn-${type} ${active ? 'active' : ''}`} aria-label="Profile" onClick={click}>
       <i className={"mdi " + iCLass} aria-hidden="true"></i> {title}
     </a>

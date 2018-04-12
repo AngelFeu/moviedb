@@ -1,6 +1,8 @@
 const initialState = {
   generosSeries: [],
   generoSerieID: null,
+  anioSerie: null,
+  ordenSerie: null,
   vistaSeries: 'grid',
   GridActivoSeries: true,
   ListActivoSeries: false,
@@ -22,6 +24,16 @@ export default (state = initialState, { type, ...payloadSeries }) => {
       return {
         ...state,
         generoSerieID: payloadSeries.generoSerieID
+      }
+    case 'ANIO_SERIE':
+      return {
+        ...state,
+        anioSerie: payloadSeries.anioSerie
+      }
+    case 'ORDEN_SERIE':
+      return {
+        ...state,
+        ordenSerie: payloadSeries.ordenSerie
       }
     case 'VISTA_SERIE_GRID':
       return {
