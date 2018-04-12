@@ -38,7 +38,7 @@ const seriesFailed = error => ({
   error
 })
 
-const fetchSeries = (generoSerieID) => dispatch => {
+const fetchSeries = (anioSerie, ordenSerie, generoSerieID) => dispatch => {
   dispatch(seriesFetched())
 
   let params = {
@@ -47,8 +47,8 @@ const fetchSeries = (generoSerieID) => dispatch => {
     page: 1
   }
   !!generoSerieID ? params.with_genres = generoSerieID : ''
-  // !!yearPelicula ? params.year = yearPelicula : ''
-  // !!sortbyPelicula ? params.sort_by = sortbyPelicula : ''
+  !!anioSerie ? params.air_date = anioSerie : ''
+  !!ordenSerie ? params.sort_by = ordenSerie : ''
 
   Axios.get('/discover/tv', { params: params
   }).then(response => {
@@ -62,8 +62,8 @@ export default compose(
   connect(mapStateToProps, { fetchSeries, fetchGenerosSeries }),
   lifecycle({
     componentDidMount(){
-    //  !!this.props.generoSerieID ? this.props.fetchSeriesWhitGenRe(this.props.generoSerieID) : this.props.fetchSeries()
-      this.props.fetchSeries(this.props.generoSerieID)
+      const { anioSerie, ordenSerie, generoSerieID } = this.props
+      this.props.fetchSeries(anioSerie, ordenSerie, generoSerieID)
       this.props.fetchGenerosSeries()
     }
   })

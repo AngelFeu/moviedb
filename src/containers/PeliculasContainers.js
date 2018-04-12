@@ -38,7 +38,7 @@ const peliculasFailed = error => ({
   error
 })
 
-const fetchPeliculas = (generoPeliculaID) => dispatch => {
+const fetchPeliculas = (anioPelicula, ordenoPelicula, generoPeliculaID) => dispatch => {
   dispatch(peliculasFetched())
 
   let params = {
@@ -47,8 +47,8 @@ const fetchPeliculas = (generoPeliculaID) => dispatch => {
     page: 1
   }
   !!generoPeliculaID ? params.with_genres = generoPeliculaID : ''
-  // !!yearPelicula ? params.year = yearPelicula : ''
-  // !!sortbyPelicula ? params.sort_by = sortbyPelicula : ''
+  !!anioPelicula ? params.year = anioPelicula : ''
+  !!ordenoPelicula ? params.sort_by = ordenoPelicula : ''
 
   Axios.get('/discover/movie', { params: params
   }).then(response =>
@@ -62,8 +62,8 @@ export default compose(
   connect(mapStateToProps, { fetchPeliculas, fetchGenerosPeliculas }),
   lifecycle({
     componentDidMount () {
-    //  !!this.props.generoPeliculaID ? this.props.fetchPeliculasWhitGenRe(this.props.generoPeliculaID) : this.props.fetchPeliculas()
-      this.props.fetchPeliculas(this.props.generoPeliculaID)
+      const { anioPelicula, ordenoPelicula, generoPeliculaID } = this.props
+      this.props.fetchPeliculas(anioPelicula, ordenoPelicula, generoPeliculaID)
       this.props.fetchGenerosPeliculas()
     }
   })

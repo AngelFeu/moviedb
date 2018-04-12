@@ -22,11 +22,6 @@ const milistaFailed = errorMiLista => ({
 
 const fetchMiLista = () => dispatch => {
   dispatch(milistaFetched())
-
-  if(window.localStorage.getItem('milista') === null){
-    window.localStorage.setItem('milista', '[]')
-  }
-
   try {
     const ver = JSON.parse(window.localStorage.getItem('milista'))
     if (ver !== '') {

@@ -1,4 +1,6 @@
 import React, {Component} from 'react'
+import { connect } from 'react-redux'
+import ViewedItems from './ViewedItems'
 import Loading from './Loading'
 import Axios from 'axios'
 
@@ -39,119 +41,58 @@ class Detalle extends Component {
   }
 
   render(){
-    const { isFetching, datos } = this.state
+    const { isFetching, datos, tipo, homePeliculas, homeSeries } = this.state
     return (
       isFetching
       ? <Loading Title="" Texto="" Mostrar="2" />
       : <main role="main">
           <div className="py-5 bg-light">
-              <div className="container">
-                  <section className="detail-section">
+            <div className="container">
+              <section className="detail-section">
+                <div className="row">
+                  <div className="col-md-4">
+                    <img src={"https://image.tmdb.org/t/p/w370_and_h556_bestv2/" + datos.backdrop_path} alt={datos.title} className="img-fluid" />
+                  </div>
+                  <div className="col-md-8">
+                    <h1>{ this.props.match.params.tipo === 'movie' ? datos.title : datos.name }</h1>
+                    <div>
+                        <h3>Overview</h3>
+                        <p>{datos.overview}</p>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div>
+                      <h3>Featured Crew</h3>
                       <div className="row">
-                          <div className="col-md-4">
-                              <img src={"https://image.tmdb.org/t/p/w370_and_h556_bestv2/" + datos.backdrop_path} alt={datos.title} className="img-fluid" />
-                          </div>
-                          <div className="col-md-8">
-                              <h1>{ this.props.match.params.tipo === 'movie' ? datos.title : datos.name }</h1>
-                              <div>
-                                  <h3>Overview</h3>
-                                  <p>{datos.overview}</p>
-                              </div>
-                              <br />
-                              <br />
-                              <br />
-                              <div>
-                                  <h3>Featured Crew</h3>
-                                  <div className="row">
-                                      <div className="col-md-4">
-                                          <h5>Taika Waititi</h5>
-                                          <p>Director</p>
-                                      </div>
-                                      <div className="col-md-4">
-                                          <h5>Taika Waititi</h5>
-                                          <p>Director</p>
-                                      </div>
-                                      <div className="col-md-4">
-                                          <h5>Taika Waititi</h5>
-                                          <p>Director</p>
-                                      </div>
-                                      <div className="col-md-4">
-                                          <h5>Taika Waititi</h5>
-                                          <p>Director</p>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+                        <div className="col-md-4">
+                          <h5>Taika Waititi</h5>
+                          <p>Director</p>
+                        </div>
+                        <div className="col-md-4">
+                          <h5>Taika Waititi</h5>
+                          <p>Director</p>
+                        </div>
+                        <div className="col-md-4">
+                          <h5>Taika Waititi</h5>
+                          <p>Director</p>
+                        </div>
+                        <div className="col-md-4">
+                          <h5>Taika Waititi</h5>
+                          <p>Director</p>
+                        </div>
                       </div>
-                  </section>
-
-                  <section className="items-section">
-                      <h5 className="items-section-title">Recomendaciones</h5>
-                      <div className="items-section-body">
-                          <div className="row">
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                              <article className="col-md-2">
-                                  <a href="detalle.html" className="grid-item">
-                                      <img src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/oSLd5GYGsiGgzDPKTwQh7wamO8t.jpg" alt="Movie" className="img-fluid" />
-                                      <span className="grid-item-body">
-                                          <span className="grid-item-title">Thor: Ragnarok</span>
-                                          <span className="grid-item-date">October 25, 2017</span>
-                                      </span>
-                                  </a>
-                              </article>
-                          </div>
-                      </div>
-                  </section>
-
-              </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              {/* {tipo === 'movie' && homePeliculas.length > 0 ? <ViewedItems Items={homePeliculas} Tipo='movie' /> : ''}
+              {tipo === 'tv' && homeSeries.length > 0 ? <ViewedItems Items={homeSeries} Tipo='tv' /> : ''} */}
+            </div>
           </div>
-      </main>
+        </main>
     )
   }
 }
 
-export default Detalle
+export default connect()(Detalle)

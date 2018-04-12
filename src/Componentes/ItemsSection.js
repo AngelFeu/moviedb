@@ -72,4 +72,4 @@ ItemsSection.defaultProps = {
   Vista : "grid",
 }
 
-export default ItemsSection;
+export default ItemsSection
