@@ -8,10 +8,13 @@ import {
   VISTA_MILISTA_GRID
 } from '../../constants/action-types'
 
-const comboMiLista = event => ({
-  type: 'FILTRO_MILISTA',
-  filtroMiLista: event.target.value
-})
+const comboMiLista = event => dispatch => {
+  dispatch({
+    type: 'FILTRO_MILISTA',
+    filtroMiLista: event.target.value
+  })
+  dispatch(fetchMiLista())
+}
 
 const vistaGrid = () => ({
   type: VISTA_MILISTA_GRID
@@ -21,12 +24,7 @@ const vistaList = () => ({
   type: 'VISTA_MILISTA_LIST'
 })
 
-const fetchMiLista = milista => ({
-  type: 'FETCH_MILISTA_SUCCESS',
-  milista
-})
-
-const Quitar = ( id ) => {
+const Quitar = ( id ) => dispatch => {
   const milista = JSON.parse(window.localStorage.getItem('milista'))
 
   const item = milista.find((item) => item.id === id)
@@ -36,10 +34,10 @@ const Quitar = ( id ) => {
     window.localStorage.setItem('milista', JSON.stringify(milista))
   }
 
-  return fetchMiLista(milista)
+  dispatch(fetchMiLista())
 }
 
-const Visto = ( id ) => {
+const Visto = ( id ) => dispatch => {
   const milista = JSON.parse(window.localStorage.getItem('milista'))
   const nuevaLista = milista.map(item => {
     if (item.id === id) {
@@ -48,7 +46,56 @@ const Visto = ( id ) => {
     return item
   })
   window.localStorage.setItem('milista', JSON.stringify(nuevaLista))
+
+  dispatch(fetchMiLista())
 }
+
+const milistaSuccess = milista => ({
+  type: 'FETCH_MILISTA_SUCCESS',
+  milista
+})
+
+const milistaFetched = () => ({
+  type: 'FETCH_MILISTA_REQUEST'
+})
+
+const milistaFailed = errorMiLista => ({
+  type: 'FETCH_MILISTA_FAILURE',
+  errorMiLista
+})
+
+const fetchMiLista = () => ( dispatch, getState ) => {
+
+  dispatch(milistaFetched())
+
+  const { milista: { filtroMiLista } } = getState()
+
+  try {
+    const ver = JSON.parse(window.localStorage.getItem('milista'))
+    if (ver !== '') {
+      let vernuevo = ver
+      filtroMiLista === 'vistas'
+        ? vernuevo = ver.filter(function(veo) {
+            return veo.visto === true
+          })
+        : ver
+      filtroMiLista === 'novistas'
+        ? vernuevo = ver.filter(function(veo) {
+            return veo.visto === false
+          })
+        : ver
+     dispatch(milistaSuccess(vernuevo))
+     dispatch(ajustarCantidad(ver.length))
+    }
+  } catch (err) {
+    dispatch(milistaFailed(err))
+  }
+}
+
+const ajustarCantidad = (cantidadItems) => ({
+  type: 'FETCH_MILISTA_CANTIDAD',
+  cantidadItems
+})
 
 const filtro = [{id: 'vistas', name: 'vistas'},{id: 'novistas', name: 'no vistas'}]
 

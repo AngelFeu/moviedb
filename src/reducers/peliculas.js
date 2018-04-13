@@ -1,5 +1,3 @@
-import Axios from 'axios'
-
 const initialState = {
   generosPeliculas: [],
   generoPeliculaID: null,
@@ -14,42 +12,6 @@ const initialState = {
   error: null
 }
 
-const peliculasSuccess = movies => ({
-  type: 'FETCH_PELICULAS_SUCCESS',
-  movies
-})
-
-const peliculasFetched = () => ({
-  type: 'FETCH_PELICULAS_REQUEST'
-})
-
-const peliculasFailed = error => ({
-  type: 'FETCH_PELICULAS_FAILURE',
-  error
-})
-
-const fetchPeliculas = () => ( dispatch, getState ) => {
-  dispatch(peliculasFetched())
-
-  const { generoPeliculaID, anioPelicula, ordenPelicula } = getState()
-
-  let params = {
-    api_key: '8bd42374a45989a00cd13bc15ad622dd',
-    language: 'es-AR',
-    page: 1
-  }
-  !!generoPeliculaID ? params.with_genres = generoPeliculaID : ''
-  !!anioPelicula ? params.year = anioPelicula : ''
-  !!ordenPelicula ? params.sort_by = ordenPelicula : ''
-
-  Axios.get('/discover/movie', { params: params
-  }).then(response =>
-    dispatch(peliculasSuccess(response.data.results))
-  , err =>
-    dispatch(peliculasFailed(err.message))
-  )
-}
-
 export default (state = initialState, { type, ...payload }) => {
   switch (type) {
     case 'FETCH_GENEROS_PELICULAS':
@@ -62,7 +24,6 @@ export default (state = initialState, { type, ...payload }) => {
         ...state,
         generoPeliculaID: payload.generoPeliculaID
       }
-      this.fetchPeliculas()
     case 'ANIO_PELICULA':
       return {
         ...state,

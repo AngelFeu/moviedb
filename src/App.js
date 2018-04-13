@@ -13,13 +13,6 @@ if(window.localStorage.getItem('milista') === null){
   window.localStorage.setItem('milista', '[]')
 }
 
-const ajustarCantidad = (cantidadItems) => ({
-  type: 'FETCH_MILISTA_CANTIDAD',
-  cantidadItems
-})
-const ver = JSON.parse(window.localStorage.getItem('milista'))
-ajustarCantidad(ver.length)
-
 class App extends Component {
   render() {
     return (

@@ -4,16 +4,23 @@ import ItemsSection from '../ItemsSection'
 import Select from '../Select'
 import Button from '../Button'
 import Loading from '../Loading'
+import Axios from 'axios'
 
-const comboAnio = event => ({
-  type: 'ANIO_SERIE',
-  anioSerie: event.target.value
-})
+const comboAnio = event => dispatch => {
+  dispatch({
+    type: 'ANIO_SERIE',
+    anioSerie: event.target.value
+  })
+  dispatch(fetchSeries())
+}
 
-const comboOrden = event => ({
-  type: 'ORDEN_SERIE',
-  ordenSerie: event.target.value
-})
+const comboOrden = event => dispatch => {
+  dispatch({
+    type: 'ORDEN_SERIE',
+    ordenSerie: event.target.value
+  })
+  dispatch(fetchSeries())
+}
 
 const ajustarCantidad = (cantidadItems) => ({
   type: 'FETCH_MILISTA_CANTIDAD',
@@ -31,10 +38,13 @@ const agregarMiLista = (id, name, first_air_date, overview, backdrop_path, visto
   return ajustarCantidad(ver.length)
 }
 
-const dispacharGenero = (event) => ({
-  type: 'GENERO_SERIE_ID',
-  generoSerieID: event.target.value
-})
+const dispacharGenero = event => dispatch => {
+  dispatch({
+    type: 'GENERO_SERIE_ID',
+    generoSerieID: event.target.value
+  })
+  dispatch(fetchSeries())
+}
 
 const vistaGrid = () => ({
   type: 'VISTA_SERIE_GRID'
@@ -44,20 +54,42 @@ const vistaList = () => ({
   type: 'VISTA_SERIE_LIST'
 })
 
-// const fetchSeries = (generoSerieID) => {
-//   seriesFetched()
-//   Axios.get('/tv/popular', { params: {
-//       api_key: '8bd42374a45989a00cd13bc15ad622dd',
-//       language: 'es-AR',
-//       genres: generoSerieID,
-//       page: 1
-//     }
-//   }).then(response => {
-//     seriesSuccess(response.data.results)
-//   }, err =>
-//     seriesFailed(err.message)
-//   )
-// }
+const seriesSuccess = tvs => ({
+  type: 'FETCH_SERIES_SUCCESS',
+  tvs
+})
+
+const seriesFetched = () => ({
+  type: 'FETCH_SERIES_REQUEST'
+})
+
+const seriesFailed = error => ({
+  type: 'FETCH_SERIES_FAILURE',
+  error
+})
+
+const fetchSeries = () => ( dispatch, getState ) => {
+
+  dispatch(seriesFetched())
+
+  const { series: { generoSerieID, anioSerie, ordenSerie } } = getState()
+
+  let params = {
+    api_key: '8bd42374a45989a00cd13bc15ad622dd',
+    language: 'es-AR',
+    page: 1
+  }
+  !!generoSerieID ? params.with_genres = generoSerieID : ''
+  !!anioSerie ? params.year = anioSerie : ''
+  !!ordenSerie ? params.sort_by = ordenSerie : ''
+
+  Axios.get('/discover/tv', { params: params
+  }).then(response =>
+    dispatch(seriesSuccess(response.data.results))
+  , err =>
+    dispatch(seriesFailed(err.message))
+  )
+}
 
 const anios = [{id: '2018', name: '2018'},{id: '2017', name: '2017'},{id: '2016', name: '2016'}]
 const orden = [{id: 'popularity.desc', name: 'Popularidad'},{id: 'release_date.desc', name: 'Fecha'},{id: 'original_title.asc', name: 'Titulo'}]
@@ -91,4 +123,4 @@ const Series = ({ comboAnio, anioSerie, comboOrden, ordenSerie, dispacharGenero,
   )
 }
 
-export default connect(null, { comboAnio, comboOrden, agregarMiLista, dispacharGenero, vistaGrid, vistaList })(Series)
+export default connect(null, { comboAnio, comboOrden, dispacharGenero, agregarMiLista, vistaGrid, vistaList })(Series)

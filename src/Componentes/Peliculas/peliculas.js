@@ -6,15 +6,21 @@ import Button from '../Button'
 import Loading from '../Loading'
 import Axios from 'axios'
 
-const comboAnio = event => ({
-  type: 'ANIO_PELICULA',
-  anioPelicula: event.target.value
-})
+const comboAnio = event => dispatch => {
+  dispatch({
+    type: 'ANIO_PELICULA',
+    anioPelicula: event.target.value
+  })
+  dispatch(fetchPeliculas())
+}
 
-const comboOrden = event => ({
-  type: 'ORDEN_PELICULA',
-  ordenPelicula: event.target.value
-})
+const comboOrden = event => dispatch => {
+  dispatch({
+    type: 'ORDEN_PELICULA',
+    ordenPelicula: event.target.value
+  })
+  dispatch(fetchPeliculas())
+}
 
 const ajustarCantidad = (cantidadItems) => ({
   type: 'FETCH_MILISTA_CANTIDAD',
@@ -32,10 +38,13 @@ const agregarMiLista = (id, name, first_air_date, overview, backdrop_path, visto
   return ajustarCantidad(ver.length)
 }
 
-const dispacharGenero = (event) => ({
-  type: 'GENERO_PELICULA_ID',
-  generoPeliculaID: event.target.value
-})
+const dispacharGenero = event => dispatch => {
+  dispatch({
+    type: 'GENERO_PELICULA_ID',
+    generoPeliculaID: event.target.value
+  })
+  dispatch(fetchPeliculas())
+}
 
 const vistaGrid = () => ({
   type: 'VISTA_PELICULA_GRID'
@@ -59,10 +68,11 @@ const peliculasFailed = error => ({
   error
 })
 
-const fetchPeliculas = () => ( getState ) => {
-  peliculasFetched()
+const fetchPeliculas = () => ( dispatch, getState ) => {
 
-  const { generoPeliculaID, anioPelicula, ordenPelicula } = getState()
+  dispatch(peliculasFetched())
+
+  const { peliculas: { generoPeliculaID, anioPelicula, ordenPelicula } } = getState()
 
   let params = {
     api_key: '8bd42374a45989a00cd13bc15ad622dd',
@@ -75,21 +85,16 @@ const fetchPeliculas = () => ( getState ) => {
 
   Axios.get('/discover/movie', { params: params
   }).then(response =>
-    peliculasSuccess(response.data.results)
+    dispatch(peliculasSuccess(response.data.results))
   , err =>
-    peliculasFailed(err.message)
+    dispatch(peliculasFailed(err.message))
   )
-}
-
-const generoOnChange = (event) => {
-  dispacharGenero(event)
-  fetchPeliculas()
 }
 
 const anios = [{id: '2018', name: '2018'},{id: '2017', name: '2017'},{id: '2016', name: '2016'}]
 const orden = [{id: 'popularity.desc', name: 'Popularidad'},{id: 'release_date.desc', name: 'Fecha'},{id: 'original_title.asc', name: 'Titulo'}]
 
-const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, generoOnChange, vistaGrid, vistaList, agregarMiLista, movies, generoPeliculaID, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
+const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, dispacharGenero, vistaGrid, vistaList, agregarMiLista, movies, generoPeliculaID, isFetching, isFetched, error, generosPeliculas, vistaPeliculas, GridActivoPeliculas, ListActivoPeliculas }) => {
   return (
     <div>
       <main role="main">
@@ -100,7 +105,7 @@ const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, generoO
               <div className="filters-bar-left">
                 <Select id="filter-year" Items={anios} selected={anioPelicula} OptionDefault="Año" alCambiar={comboAnio} />
                 <Select id="filter-sort" Items={orden} selected={ordenPelicula} OptionDefault="Ordenar por" alCambiar={comboOrden} />
-                <Select id="filter-genre" Items={generosPeliculas} selected={generoPeliculaID} OptionDefault="Géneros" alCambiar={generoOnChange}/>
+                <Select id="filter-genre" Items={generosPeliculas} selected={generoPeliculaID} OptionDefault="Géneros" alCambiar={dispacharGenero}/>
               </div>
               <div className="filters-bar-right">
                 <Button iCLass="mdi-view-grid" type="light" click={vistaGrid} active={GridActivoPeliculas} />
@@ -118,4 +123,4 @@ const Peliculas = ({ comboAnio, anioPelicula, comboOrden, ordenPelicula, generoO
   )
 }
 
-export default connect(null, { comboAnio, comboOrden, generoOnChange, agregarMiLista, vistaGrid, vistaList })(Peliculas)
+export default connect(null, { comboAnio, comboOrden, dispacharGenero, agregarMiLista, vistaGrid, vistaList })(Peliculas)
